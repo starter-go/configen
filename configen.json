@@ -1,0 +1,21 @@
+{
+    "configen": {
+        "version": "4",
+        "sources": [
+            {
+                "id": "s1",
+                "path": "src/example",
+                "r": true
+            }
+        ],
+        "destinations": [
+            {
+                "id": "d1",
+                "path": "gen/example",
+                "sources": [
+                    "s1x"
+                ]
+            }
+        ]
+    }
+}

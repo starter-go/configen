@@ -1,13 +1,8 @@
 package generators
 
 import (
-	"encoding/json"
-	"fmt"
-	"os"
-
-	"github.com/starter-go/afs/files"
 	v4 "github.com/starter-go/configen/v4"
-	"github.com/starter-go/configen/v4/vo"
+	"github.com/starter-go/configen/v4/readers"
 )
 
 // Application 表示 configen app 本身
@@ -15,19 +10,12 @@ type Application struct {
 	steps []func(c *v4.Context) error
 }
 
-// AddStep ...
-func (inst *Application) AddStep(fn func(c *v4.Context) error) *Application {
-	if fn != nil {
-		inst.steps = append(inst.steps, fn)
-	}
-	return inst
-}
-
 // Run 应用主入口
 func (inst *Application) Run() error {
 
-	ctx := &v4.Context{}
+	inst.makeSteps()
 	steps := inst.steps
+	ctx := &v4.Context{}
 
 	for _, step := range steps {
 		err := step(ctx)
@@ -39,64 +27,26 @@ func (inst *Application) Run() error {
 	return nil
 }
 
-// LocateWorkingDir ...
-func (inst *Application) LocateWorkingDir(c *v4.Context) error {
-	wd, err := os.Getwd()
-	if err != nil {
-		return err
+func (inst *Application) addStep(fn v4.StepFunc) {
+	if fn != nil {
+		list := inst.steps
+		list = append(list, fn)
+		inst.steps = list
 	}
-	dir := files.FS().NewPath(wd)
-	if !dir.IsDirectory() {
-		return fmt.Errorf("the path is not a dir: %s", wd)
-	}
-	c.WD = dir
-	return nil
 }
 
-// LocateGoModule ...
-func (inst *Application) LocateGoModule(c *v4.Context) error {
-	const forName = "go.mod"
-	wd := c.WD
-	mod := &v4.Module{}
-	for pdir := wd; pdir != nil; pdir = pdir.GetParent() {
-		if pdir.IsDirectory() {
-			file := pdir.GetChild(forName)
-			if file.IsFile() {
-				mod.Path = file
-				c.Module = mod
-				return nil
-			}
-		}
-	}
-	path := wd.GetPath()
-	return fmt.Errorf("cannot find 'go.mod' from working dir [%s]", path)
-}
+func (inst *Application) makeSteps() {
 
-// LoadConfigenJSON ...
-func (inst *Application) LoadConfigenJSON(c *v4.Context) error {
+	sf := &stepFactory{}
 
-	const name = "configen.json"
-	file := c.Module.Path.GetParent().GetChild(name)
-	data, err := file.GetIO().ReadBinary(nil)
-	if err != nil {
-		return err
-	}
+	inst.addStep(inst.locateWorkingDir)
+	inst.addStep(inst.locateGoModule)
+	inst.addStep(inst.loadConfigenJSON)
+	inst.addStep(readers.ReadGoModuleInfo)
+	inst.addStep(LoadSources)
+	inst.addStep(LoadDestinations)
+	inst.addStep(readers.ReadDestinationConfigenGoFiles)
 
-	fmt.Println("load configurations from ", file.GetPath())
+	inst.addStep(sf.stepToScanSourceFiles())
 
-	doc := &vo.Configen{}
-	err = json.Unmarshal(data, doc)
-	if err != nil {
-		return err
-	}
-
-	// check version
-	const versionWant = "4"
-	versionHave := doc.Configen.Version
-	if versionHave != versionWant {
-		return fmt.Errorf("bad configen version, want:%s have:%s", versionWant, versionHave)
-	}
-
-	c.Configuration = doc
-	return nil
 }

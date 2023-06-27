@@ -16,6 +16,9 @@ type Context struct {
 	Sources      map[dto.SourceID]*SourceFolder
 }
 
+// StepFunc 定义生成步骤函数
+type StepFunc func(c *Context) error
+
 // SourceFolder ...
 type SourceFolder struct {
 	ID     dto.SourceID

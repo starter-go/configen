@@ -1,4 +1,4 @@
-package readers
+package gocode
 
 import "testing"
 
@@ -15,11 +15,11 @@ func TestGoCodeWordsReader(t *testing.T) {
 		"foo pppp.Inter   //  starter : inject (   \"#example-1\") ",
 	}
 
-	reader := &GoCodeWordsReader{}
+	reader := &wordsReader{}
 	for _, row := range rows {
 		words := reader.Read(row)
 		t.Logf("read row: %s", row)
-		for i, word := range words {
+		for i, word := range words.list {
 			t.Logf("  word[%d] = %s", i, word)
 		}
 	}

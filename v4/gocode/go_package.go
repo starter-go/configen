@@ -1,4 +1,4 @@
-package v4
+package gocode
 
 import "github.com/starter-go/afs"
 

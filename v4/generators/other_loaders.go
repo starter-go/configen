@@ -7,6 +7,7 @@ import (
 
 	"github.com/starter-go/afs/files"
 	v4 "github.com/starter-go/configen/v4"
+	"github.com/starter-go/configen/v4/gocode"
 	"github.com/starter-go/configen/v4/vo"
 )
 
@@ -28,7 +29,7 @@ func (inst *Application) locateWorkingDir(c *v4.Context) error {
 func (inst *Application) locateGoModule(c *v4.Context) error {
 	const forName = "go.mod"
 	wd := c.WD
-	mod := &v4.Module{}
+	mod := &gocode.Module{}
 	for pdir := wd; pdir != nil; pdir = pdir.GetParent() {
 		if pdir.IsDirectory() {
 			file := pdir.GetChild(forName)

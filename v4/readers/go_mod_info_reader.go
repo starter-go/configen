@@ -6,6 +6,7 @@ import (
 
 	"github.com/starter-go/afs"
 	v4 "github.com/starter-go/configen/v4"
+	"github.com/starter-go/configen/v4/gocode"
 )
 
 // ReadGoModuleInfo 读取 go.mod 文件信息
@@ -30,12 +31,12 @@ func ReadGoModuleInfo(c *v4.Context) error {
 type gomodInfoReader struct {
 }
 
-func (inst *gomodInfoReader) read(file afs.Path) (*v4.Module, error) {
+func (inst *gomodInfoReader) read(file afs.Path) (*gocode.Module, error) {
 	rows, err := ReadRows(file)
 	if err != nil {
 		return nil, err
 	}
-	mod := &v4.Module{}
+	mod := &gocode.Module{}
 	mod.Path = file
 	for _, row := range rows {
 		res, err := inst.parseModuleRow(row)

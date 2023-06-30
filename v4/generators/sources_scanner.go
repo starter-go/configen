@@ -7,13 +7,13 @@ import (
 
 	"github.com/starter-go/afs"
 	v4 "github.com/starter-go/configen/v4"
+	"github.com/starter-go/configen/v4/gocode"
 	"github.com/starter-go/configen/v4/readers"
-	"github.com/starter-go/vlog"
 )
 
 type goSourceFileScanner struct {
 	currentContext *v4.Context
-	currentSource  *v4.SourceFolder
+	currentSource  *gocode.SourceFolder
 	currentDir     afs.Path
 	currentFile    afs.Path
 }
@@ -42,8 +42,9 @@ func (inst *goSourceFileScanner) scanFile(file afs.Path) error {
 		return err
 	}
 
-	vlog.Debug("", result.Name)
-
+	// vlog.Debug("", result.Name)
+	inst.currentContext.GoFiles.Add(result)
+	result.OwnerPackage.OwnerGroup = inst.currentSource
 	return nil
 }
 
@@ -93,11 +94,11 @@ func (inst *goSourceFileScanner) scanIntoDir(dir afs.Path, r bool, depth int) er
 	return nil
 }
 
-func (inst *goSourceFileScanner) scanSourceDir(folder *v4.SourceFolder) error {
+func (inst *goSourceFileScanner) scanSourceDir(folder *gocode.SourceFolder) error {
 	inst.currentSource = folder
 	dir := folder.Path
 	r := folder.Config.Recursive
-	fmt.Println("scan source folder:", folder.ID)
+	fmt.Printf("scan source tree:%s (at %s)\n", folder.ID, dir.GetPath())
 	return inst.scanIntoDir(dir, r, 0)
 }
 

@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	v4 "github.com/starter-go/configen/v4"
+	"github.com/starter-go/configen/v4/gocode"
 )
 
 type destinationConfigenGoFileReader struct {
@@ -21,7 +22,7 @@ func (inst *destinationConfigenGoFileReader) readFiles() error {
 	return nil
 }
 
-func (inst *destinationConfigenGoFileReader) readFile(f *v4.DestinationFolder) error {
+func (inst *destinationConfigenGoFileReader) readFile(f *gocode.DestinationFolder) error {
 	const (
 		filename       = "configen.go"
 		prefixPackage1 = "package "

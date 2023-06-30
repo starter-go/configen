@@ -5,13 +5,14 @@ import (
 
 	v4 "github.com/starter-go/configen/v4"
 	"github.com/starter-go/configen/v4/dto"
+	"github.com/starter-go/configen/v4/gocode"
 )
 
 type sourcesLoader struct {
 	context *v4.Context
 }
 
-func (inst *sourcesLoader) loadSource(item1 *dto.Source) (*v4.SourceFolder, error) {
+func (inst *sourcesLoader) loadSource(item1 *dto.Source) (*gocode.SourceFolder, error) {
 
 	id := item1.ID
 	goMod := inst.context.Module.Path
@@ -21,7 +22,7 @@ func (inst *sourcesLoader) loadSource(item1 *dto.Source) (*v4.SourceFolder, erro
 		return nil, fmt.Errorf("no configen source directory %s", path.GetPath())
 	}
 
-	item2 := &v4.SourceFolder{
+	item2 := &gocode.SourceFolder{
 		ID:     id,
 		Config: *item1,
 		Path:   path,
@@ -34,7 +35,7 @@ func (inst *sourcesLoader) load() error {
 	ctx := inst.context
 	config := ctx.Configuration
 	list1 := config.Configen.Sources
-	tab2 := make(map[dto.SourceID]*v4.SourceFolder)
+	tab2 := make(map[dto.SourceID]*gocode.SourceFolder)
 
 	for _, item1 := range list1 {
 		id := item1.ID

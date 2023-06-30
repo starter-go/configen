@@ -10,7 +10,7 @@ import (
 type Import struct {
 	Alias    string
 	FullName string
-	HexName  string
+	HexName  lang.Hex
 }
 
 // ComputeHexName 计算字段 'HexName' 的值
@@ -18,7 +18,7 @@ func (inst *Import) ComputeHexName() {
 	plain := inst.FullName
 	sum := md5.Sum([]byte(plain))
 	hex := lang.HexFromBytes(sum[:])
-	inst.HexName = hex.String()
+	inst.HexName = hex
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -32,9 +32,10 @@ type TypeStruct struct {
 	ComAlias    string
 	ComScope    string
 
-	Name   string            // 结构体名称
-	Fields FieldSet          // 字段集合
-	As     ImplementationSet // 这里用 Field 结构来表示实现的各个接口
+	OwnerPackage *Package          // 结构体所在的包
+	Name         string            // 结构体名称
+	Fields       FieldSet          // 字段集合
+	As           ImplementationSet // 这里用 Field 结构来表示实现的各个接口
 }
 
 // Field 表示 struct 中的一个需要注入的字段
@@ -62,6 +63,11 @@ func (inst *ImplementationSet) Add(item *Implementation) {
 		return
 	}
 	inst.list = append(inst.list, item)
+}
+
+// List ...
+func (inst *ImplementationSet) List() []*Implementation {
+	return inst.list
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -110,6 +116,11 @@ func (inst *TypeStructSet) Add(items ...*TypeStruct) {
 	inst.list = append(inst.list, items...)
 }
 
+// List ...
+func (inst *TypeStructSet) List() []*TypeStruct {
+	return inst.list
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // FieldSet 是若干 Field 的集合
@@ -120,6 +131,11 @@ type FieldSet struct {
 // Add ...
 func (inst *FieldSet) Add(items ...*Field) {
 	inst.list = append(inst.list, items...)
+}
+
+// List ...
+func (inst *FieldSet) List() []*Field {
+	return inst.list
 }
 
 ////////////////////////////////////////////////////////////////////////////////

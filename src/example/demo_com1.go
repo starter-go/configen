@@ -75,7 +75,7 @@ type Com3 struct {
 
 	//starter:component("com-3-abc", alias="c3-xyz c3-ijk")
 
-	A int //starter:inject("#com-8BCF6629759BD278A5C6266BD9C054F8-Value")
+	A int //starter:inject("#")
 	B bool
 	C rune
 	D []byte
@@ -87,7 +87,7 @@ type Com3 struct {
 
 // ComNot 这不是一个组件
 type ComNot struct {
-	A int //starter:inject("#com-8BCF6629759BD278A5C6266BD9C054F8-Value")
+	A int //starter:inject("666")
 	B bool
 	C rune
 	D []byte

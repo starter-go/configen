@@ -22,9 +22,9 @@ type codeFragment string
 // GoSourceFileReader ...
 type GoSourceFileReader struct {
 	// context
-	context *v4.Context
-	sf      *v4.SourceFolder
-	pack    *gocode.Package
+	context    *v4.Context
+	sourcetree *gocode.SourceFolder
+	pack       *gocode.Package
 
 	// handler-groups
 	hGroupForStarterToken goCodeRowHandlerGroup
@@ -47,10 +47,10 @@ func NewGoSourceFileReader() *GoSourceFileReader {
 }
 
 // Init ...
-func (inst *GoSourceFileReader) Init(ctx *v4.Context, src *v4.SourceFolder) {
+func (inst *GoSourceFileReader) Init(ctx *v4.Context, src *gocode.SourceFolder) {
 
 	inst.context = ctx
-	inst.sf = src
+	inst.sourcetree = src
 	inst.pack = nil
 	inst.result = nil
 
@@ -140,12 +140,12 @@ func (inst *GoSourceFileReader) parseRow(row string, rowNum int) error {
 		}
 	}
 	gcRow := &goCodeRow{
-		context: inst.context,
-		pack:    inst.pack,
-		sf:      inst.sf,
-		source:  inst.result,
-		module:  inst.context.Module,
-		reader:  inst,
+		context:    inst.context,
+		pack:       inst.pack,
+		sourcetree: inst.sourcetree,
+		source:     inst.result,
+		module:     inst.context.Module,
+		reader:     inst,
 	}
 	gcRow.init(rowNum, row)
 	return h.Handle(gcRow)
@@ -159,11 +159,11 @@ type goCodeRow struct {
 	words     gocode.Words
 
 	context *v4.Context
-	sf      *v4.SourceFolder
 
-	module *gocode.Module
-	pack   *gocode.Package
-	source *gocode.Source
+	sourcetree *gocode.SourceFolder
+	module     *gocode.Module
+	pack       *gocode.Package
+	source     *gocode.Source
 
 	reader   *GoSourceFileReader
 	fragment codeFragment // 用来区分同一个代码实体的不同部分
@@ -460,25 +460,11 @@ func (inst *rowHandlerForTypeStruct) handleBlockBegin(row *goCodeRow) error {
 
 func (inst *rowHandlerForTypeStruct) handleBlockEnd(row *goCodeRow) error {
 	item := row.reader.currentTypeStruct
+	item.OwnerPackage = row.source.OwnerPackage
 	row.reader.currentTypeStruct = nil
 	row.source.TypeStructSet.Add(item)
 	return nil
 }
-
-////////////////////////////////////////////////////////////////////////////////
-
-// type rowHandlerForFuncOfStruct struct{}
-
-// func (inst *rowHandlerForFuncOfStruct) Init() {
-// }
-
-// func (inst *rowHandlerForFuncOfStruct) Accept(row *goCodeRow) bool {
-// 	return false // todo ...
-// }
-
-// func (inst *rowHandlerForFuncOfStruct) Handle(row *goCodeRow) error {
-// 	return nil // todo ...
-// }
 
 ////////////////////////////////////////////////////////////////////////////////
 

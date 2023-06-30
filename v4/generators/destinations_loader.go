@@ -5,13 +5,14 @@ import (
 
 	v4 "github.com/starter-go/configen/v4"
 	"github.com/starter-go/configen/v4/dto"
+	"github.com/starter-go/configen/v4/gocode"
 )
 
 type destinationsLoader struct {
 	context *v4.Context
 }
 
-func (inst *destinationsLoader) loadDestination(item1 *dto.Destination) (*v4.DestinationFolder, error) {
+func (inst *destinationsLoader) loadDestination(item1 *dto.Destination) (*gocode.DestinationFolder, error) {
 
 	id := item1.ID
 	goMod := inst.context.Module.Path
@@ -21,7 +22,7 @@ func (inst *destinationsLoader) loadDestination(item1 *dto.Destination) (*v4.Des
 		return nil, fmt.Errorf("no configen destination directory %s", path.GetPath())
 	}
 
-	item2 := &v4.DestinationFolder{
+	item2 := &gocode.DestinationFolder{
 		ID:     id,
 		Config: *item1,
 		Path:   path,
@@ -46,7 +47,7 @@ func (inst *destinationsLoader) load() error {
 	ctx := inst.context
 	config := ctx.Configuration
 	list1 := config.Configen.Destinations
-	tab2 := make(map[dto.DestinationID]*v4.DestinationFolder)
+	tab2 := make(map[dto.DestinationID]*gocode.DestinationFolder)
 
 	for _, item1 := range list1 {
 		id := item1.ID

@@ -18,6 +18,9 @@ func (inst *Application) Run() error {
 	ctx := &v4.Context{}
 
 	for _, step := range steps {
+		if step == nil {
+			continue
+		}
 		err := step(ctx)
 		if err != nil {
 			return err
@@ -48,5 +51,8 @@ func (inst *Application) makeSteps() {
 	inst.addStep(readers.ReadDestinationConfigenGoFiles)
 
 	inst.addStep(sf.stepToScanSourceFiles())
+	inst.addStep(sf.stepToResolveConfigenInfo())
+	inst.addStep(sf.stepToCleanDestFolders())
+	inst.addStep(sf.stepToLogComInfo())
 
 }

@@ -51,7 +51,8 @@ type Com2 struct {
 	//starter:component
 	_as func(io.Writer, io.Reader) //starter:as(".","#.")
 
-	F1 int //starter:inject("${a.b.c.d}")
+	F1 int     //starter:inject("${a.b.c.d}")
+	F2 *ComNot //starter:inject("#com-not")
 
 }
 

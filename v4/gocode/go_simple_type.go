@@ -45,19 +45,19 @@ func CreateSimpleType(words *Words, imports *ImportSet) (*SimpleType, error) {
 		return nil, fmt.Errorf("unsupported type: %s", st.Text)
 	}
 
-	pkgAlias := st.Package.Alias
-	if imports != nil && pkgAlias != "" {
+	// check native type
+	simpleName := st.SimpleName
+	simpleNameL := strings.ToLower(simpleName)
+	st.IsNativeType = (simpleName == simpleNameL)
+
+	if imports != nil && !st.IsNativeType {
+		pkgAlias := st.Package.Alias
 		imp := imports.Find(pkgAlias)
 		if imp == nil {
 			return nil, fmt.Errorf("no import item with alias: %s", pkgAlias)
 		}
 		st.Package.FullName = imp.FullName
 	}
-
-	// check native type
-	simpleName := st.SimpleName
-	simpleNameL := strings.ToLower(simpleName)
-	st.IsNativeType = (simpleName == simpleNameL)
 
 	return st, nil
 }

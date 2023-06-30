@@ -260,7 +260,19 @@ func (inst *rowHandlerForPackage) Handle(row *goCodeRow) error {
 	p.OwnerModule = module
 	p.FullName = inst.computePackageFullName(row)
 
+	inst.registerSelf(row)
+
 	return nil
+}
+
+func (inst *rowHandlerForPackage) registerSelf(row *goCodeRow) {
+	i := &row.source.ImportSet
+	p := row.source.OwnerPackage
+	fullname := p.FullName
+	i.Add(&gocode.Import{
+		Alias:    "",
+		FullName: fullname,
+	})
 }
 
 func (inst *rowHandlerForPackage) computePackageFullName(row *goCodeRow) string {
@@ -584,6 +596,10 @@ func (inst *rowHandlerForStarterInject) Handle(row *goCodeRow) error {
 
 	return nil // todo ...
 }
+
+//  func ( inst *rowHandlerForStarterInject ) loadTypeInfo (elements *gocode.Words ,  * ImportSet) ComplexType {
+
+//  }
 
 func (inst *rowHandlerForStarterInject) parsePart1(row *goCodeRow, part1 []string) (*gocode.Field, error) {
 

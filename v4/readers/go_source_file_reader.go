@@ -63,7 +63,6 @@ func (inst *GoSourceFileReader) initGroupStarterToken() {
 	group := &inst.hGroupForStarterToken
 	group.add(&rowHandlerForStarterComponent{})
 	group.add(&rowHandlerForStarterInject{})
-	group.add(&rowHandlerForStarterInterface{})
 	group.Init()
 }
 
@@ -72,13 +71,14 @@ func (inst *GoSourceFileReader) initGroupGoCode() {
 	group.add(&rowHandlerForPackage{})
 	group.add(&rowHandlerForImport{})
 	group.add(&rowHandlerForTypeStruct{})
-	group.add(&rowHandlerForFuncOfStruct{})
+	// group.add(&rowHandlerForFuncOfStruct{})
 	group.Init()
 }
 
 func (inst *GoSourceFileReader) initGroupGoCodeWithST() {
 	group := &inst.hGroupForGoCodeWithST
 	group.add(&rowHandlerForStarterInject{})
+	group.add(&rowHandlerForStarterAs{})
 	group.Init()
 }
 
@@ -467,18 +467,18 @@ func (inst *rowHandlerForTypeStruct) handleBlockEnd(row *goCodeRow) error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type rowHandlerForFuncOfStruct struct{}
+// type rowHandlerForFuncOfStruct struct{}
 
-func (inst *rowHandlerForFuncOfStruct) Init() {
-}
+// func (inst *rowHandlerForFuncOfStruct) Init() {
+// }
 
-func (inst *rowHandlerForFuncOfStruct) Accept(row *goCodeRow) bool {
-	return false // todo ...
-}
+// func (inst *rowHandlerForFuncOfStruct) Accept(row *goCodeRow) bool {
+// 	return false // todo ...
+// }
 
-func (inst *rowHandlerForFuncOfStruct) Handle(row *goCodeRow) error {
-	return nil // todo ...
-}
+// func (inst *rowHandlerForFuncOfStruct) Handle(row *goCodeRow) error {
+// 	return nil // todo ...
+// }
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -673,17 +673,113 @@ func (inst *rowHandlerForStarterInject) getPart123(row *goCodeRow) ([]string, st
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type rowHandlerForStarterInterface struct{}
-
-func (inst *rowHandlerForStarterInterface) Init() {
+type rowHandlerForStarterAs struct {
+	keyword string
 }
 
-func (inst *rowHandlerForStarterInterface) Accept(row *goCodeRow) bool {
-	return false // todo ...
+func (inst *rowHandlerForStarterAs) Init() {
+	inst.keyword = "//starter:as"
 }
 
-func (inst *rowHandlerForStarterInterface) Handle(row *goCodeRow) error {
-	return nil // todo ...
+func (inst *rowHandlerForStarterAs) Accept(row *goCodeRow) bool {
+	return strings.Contains(row.text, inst.keyword)
+}
+
+func (inst *rowHandlerForStarterAs) Handle(row *goCodeRow) error {
+	// name func(t1,t2,t3) //starter:as("#",".","#.")
+	kw := inst.keyword
+	elements := row.words.List()
+	builder := strings.Builder{}
+	part1 := make([]string, 0)
+	part2 := make([]string, 0)
+	part3 := make([]string, 0)
+	ipart := 1
+
+	for _, el := range elements {
+		switch ipart {
+		case 1:
+			if el == "/" {
+				ipart++
+				part2 = append(part2, el)
+				builder.WriteString(el)
+			} else {
+				part1 = append(part1, el)
+			}
+			break
+		case 2:
+			part2 = append(part2, el)
+			builder.WriteString(el)
+			if builder.String() == kw {
+				ipart++
+			}
+			break
+		case 3:
+			part3 = append(part3, el)
+			break
+		}
+	}
+
+	part1words := gocode.NewWords(part1)
+	params, err := gocode.CreateConfigenParams(gocode.NewWords(part3))
+	if err != nil {
+		return err
+	}
+	return inst.parseStarterAsList(row, part1words, params)
+}
+
+func (inst *rowHandlerForStarterAs) parseStarterAsList(row *goCodeRow, fn *gocode.Words, params *gocode.ConfigenParams) error {
+
+	// check
+	size := fn.Len()
+	iend := size - 1
+	ibegin := 2
+	name := fn.WordAt(0, "")
+	tFunc := fn.WordAt(1, "")       // 'func'
+	tBegin := fn.WordAt(ibegin, "") // '('
+	tEnd := fn.WordAt(iend, "")     // ')'
+	if tFunc != "func" || tBegin != "(" || tEnd != ")" {
+		return fmt.Errorf("bad starter:as func: %s", name)
+	}
+
+	fragment := make([]string, 0)
+	iParam := 0
+
+	for i := ibegin + 1; i <= iend; i++ {
+		word := fn.WordAt(i, "")
+		if word == "," || word == ")" {
+			param := params.GetItemAt(iParam)
+			err := inst.parseStarterAsItem(row, fragment, param)
+			if err != nil {
+				return err
+			}
+			fragment = make([]string, 0)
+			iParam++
+		} else {
+			fragment = append(fragment, word)
+		}
+	}
+
+	return nil
+}
+
+func (inst *rowHandlerForStarterAs) parseStarterAsItem(row *goCodeRow, fragment []string, param *gocode.ConfigenParam) error {
+
+	fragmentWords := gocode.NewWords(fragment)
+	imports := &row.source.ImportSet
+	ct, err := gocode.CreateComplexType(fragmentWords, imports)
+	if err != nil {
+		return err
+	}
+
+	impl := &gocode.Implementation{}
+	impl.Type = *ct
+	if param != nil {
+		impl.Injection = param.Value
+	}
+
+	ts := row.reader.currentTypeStruct
+	ts.As.Add(impl)
+	return nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////

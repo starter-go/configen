@@ -1,9 +1,27 @@
 package gocode
 
+import (
+	"crypto/md5"
+
+	"github.com/starter-go/base/lang"
+)
+
+// Import 表示导入当前源文件的一个包
 type Import struct {
 	Alias    string
 	FullName string
+	HexName  string
 }
+
+// ComputeHexName 计算字段 'HexName' 的值
+func (inst *Import) ComputeHexName() {
+	plain := inst.FullName
+	sum := md5.Sum([]byte(plain))
+	hex := lang.HexFromBytes(sum[:])
+	inst.HexName = hex.String()
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 // TypeStruct 表示一个结构体类型
 type TypeStruct struct {
@@ -14,14 +32,36 @@ type TypeStruct struct {
 	ComAlias    string
 	ComScope    string
 
-	Name   string   // 结构体名称
-	Fields FieldSet // 字段集合
+	Name   string            // 结构体名称
+	Fields FieldSet          // 字段集合
+	As     ImplementationSet // 这里用 Field 结构来表示实现的各个接口
 }
 
+// Field 表示 struct 中的一个需要注入的字段
 type Field struct {
 	Name      string
 	Type      ComplexType
 	Injection string
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+// Implementation 表示组件实现的一个接口
+type Implementation struct {
+	Field
+}
+
+// ImplementationSet 表示组件实现的一组接口
+type ImplementationSet struct {
+	list []*Implementation
+}
+
+// Add ...
+func (inst *ImplementationSet) Add(item *Implementation) {
+	if item == nil || inst == nil {
+		return
+	}
+	inst.list = append(inst.list, item)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

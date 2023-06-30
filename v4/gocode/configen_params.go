@@ -30,6 +30,15 @@ func (inst *ConfigenParams) GetItems() []*ConfigenParam {
 	return list
 }
 
+// GetItemAt ...
+func (inst *ConfigenParams) GetItemAt(index int) *ConfigenParam {
+	size := len(inst.items)
+	if 0 <= index && index < size {
+		return inst.items[index]
+	}
+	return nil
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // ParseConfigenParams 解析配置参数

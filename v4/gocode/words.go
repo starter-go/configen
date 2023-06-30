@@ -97,6 +97,11 @@ func (inst *Words) List() []string {
 	return inst.list
 }
 
+// Len 返回列表长度
+func (inst *Words) Len() int {
+	return len(inst.list)
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // wordsReader go 代码分词读取

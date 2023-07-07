@@ -7,6 +7,7 @@ import (
 	"github.com/starter-go/configen/v4/gocode"
 )
 
+// FieldInjector 具体某个字段的注射器
 type FieldInjector struct {
 	getterName  string
 	fieldName   string
@@ -23,6 +24,7 @@ func (inst *FieldInjector) init(factoryType string, com *gocode.TypeStruct, fiel
 	inst.selector = field.Injection
 }
 
+// MakeAssignmentStatement 创建注入语句
 func (inst *FieldInjector) MakeAssignmentStatement() string {
 
 	builder := strings.Builder{}
@@ -36,6 +38,7 @@ func (inst *FieldInjector) MakeAssignmentStatement() string {
 	return builder.String()
 }
 
+// MakeGetterFunc 创建 getter 函数
 func (inst *FieldInjector) MakeGetterFunc() string {
 
 	const nl = "\n"
@@ -46,7 +49,7 @@ func (inst *FieldInjector) MakeGetterFunc() string {
 	builder.WriteString(inst.factoryName)
 	builder.WriteString(") ")
 	builder.WriteString(inst.getterName)
-	builder.WriteString("(ie components.InjectionExt)")
+	builder.WriteString("(ie application.InjectionExt)")
 	builder.WriteString(inst.fieldType.String())
 	builder.WriteString("{" + nl)
 	inst.makeGetterInner(builder)
@@ -69,14 +72,29 @@ func (inst *FieldInjector) makeGetterInner(b *strings.Builder) {
 }
 
 func (inst *FieldInjector) isContext() bool {
+
+	// const (
+	// 	wantPackage = "///applictaion"
+	// 	wantName    = "Context"
+	// )
+
+	// tc := inst.fieldType
+	// if tc.IsArray || tc.IsMap {
+	// 	return false
+	// }
+	// ts := tc.ValueType
+	// if ts.IsNativeType || ts.IsPtr {
+	// 	return false
+	// }
+	// return (sel == "context") && (ts.Package.FullName == wantPackage) && (ts.SimpleName == wantName)
+
 	sel := inst.selector
-	t := inst.fieldType.String()
-	return (sel == "context") && (t == "application.Context")
+	return (sel == "context")
 }
 
 func (inst *FieldInjector) makeGetterInnerForContext(b *strings.Builder) {
 	// panic("unsupport: inject with a context")
-	text := "return ie.GetApplicationContext().(application.Context)"
+	text := "return ie.GetContext()"
 	b.WriteString("    " + text + "\n")
 }
 

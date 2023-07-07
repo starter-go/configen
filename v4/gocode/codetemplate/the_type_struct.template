@@ -9,24 +9,25 @@
 type {{.FactoryType}} struct {
 }
 
-func (inst* {{.FactoryType}}) register(cr components.Registry) {
-	r := cr.New()
+func (inst* {{.FactoryType}}) register(cr application.ComponentRegistry) error {
+	r := cr.NewRegistration()
 	r.ID = "{{.ComID}}"
 	r.Classes = "{{.ComClass}}"
 	r.Aliases = "{{.ComAlias}}"
 	r.Scope = "{{.ComScope}}"
 	r.NewFunc = inst.new
 	r.InjectFunc = inst.inject
-	cr.Register(r)
+	return r.Commit()
 }
 
 func (inst* {{.FactoryType}}) new() any {
     return &{{.InstanceType}}{}
 }
 
-func (inst* {{.FactoryType}}) inject(injection components.Injection, instance any) error {
-	ie := injection.Ext()
+func (inst* {{.FactoryType}}) inject(injext application.InjectionExt, instance any) error {
+	ie := injext
 	com := instance.(*{{.InstanceType}})
+	nop(ie, com)
 
 	{{.InjectFieldList}}
 

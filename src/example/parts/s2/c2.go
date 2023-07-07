@@ -32,27 +32,33 @@ func (inst *Com2service) Life() *application.Life {
 	return &application.Life{
 		OnCreate:  inst.onCreate,
 		OnStart:   inst.onStart,
+		OnLoop:    inst.loop,
 		OnStop:    inst.onStop,
 		OnDestroy: inst.onDestroy,
 	}
 }
 
 func (inst *Com2service) onCreate() error {
-	vlog.Warn("%v.onCreate", inst)
+	vlog.Info("%v.onCreate", inst)
 	return nil
 }
 
 func (inst *Com2service) onStart() error {
-	vlog.Warn("%v.onStart", inst)
+	vlog.Info("%v.onStart", inst)
 	return nil
 }
 
 func (inst *Com2service) onStop() error {
-	vlog.Warn("%v.onStop", inst)
+	vlog.Info("%v.onStop", inst)
 	return nil
 }
 
 func (inst *Com2service) onDestroy() error {
-	vlog.Warn("%v.onDestroy", inst)
+	vlog.Info("%v.onDestroy", inst)
+	return nil
+}
+
+func (inst *Com2service) loop() error {
+	vlog.Info("%v.loop", inst)
 	return nil
 }

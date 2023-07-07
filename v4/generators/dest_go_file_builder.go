@@ -204,7 +204,7 @@ func (inst *simpleGoFileBuilder) makeImportList(b *strings.Builder) {
 	)
 
 	src := inst.importSet.List()
-	src = inst.addImport(src, "github.com/starter-go/application/components")
+	src = inst.addImport(src, "github.com/starter-go/application")
 
 	b.WriteString("import (" + nl)
 	for _, item := range src {

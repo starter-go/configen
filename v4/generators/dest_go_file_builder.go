@@ -160,6 +160,7 @@ func (inst *simpleGoFileBuilder) makeFieldInjectorList(ts1 *gocode.TypeStruct, t
 
 func (inst *simpleGoFileBuilder) makeInjectFieldList(fields []*FieldInjector) string {
 	builder := strings.Builder{}
+	builder.WriteString("\n")
 	for _, f := range fields {
 		str := f.MakeAssignmentStatement()
 		builder.WriteString(str + "\n")

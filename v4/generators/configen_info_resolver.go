@@ -58,15 +58,16 @@ func (inst *configenInfoResolve) resolveTypeStruct(c *v4.Context, ts *gocode.Typ
 func (inst *configenInfoResolve) resolveComImpl(c *v4.Context, ts *gocode.TypeStruct, impl *gocode.Implementation) error {
 
 	selector := impl.Injection
-	inj := inst.makeInjectionNameForType(&impl.Type, selector)
 
 	if strings.ContainsRune(selector, '#') {
 		// add to alias
+		inj := inst.makeInjectionNameForType(&impl.Type, '#')
 		ts.ComAlias = strings.TrimSpace(ts.ComAlias + " " + inj)
 	}
 
 	if strings.ContainsRune(selector, '.') {
 		// add to class
+		inj := inst.makeInjectionNameForType(&impl.Type, '.')
 		ts.ComClass = strings.TrimSpace(ts.ComClass + " " + inj)
 	}
 
@@ -77,13 +78,15 @@ func (inst *configenInfoResolve) resolveField(c *v4.Context, f *gocode.Field) er
 	selector := f.Injection
 	if selector == "#" || selector == "." {
 		ct := &f.Type
-		inj := inst.makeInjectionNameForType(ct, selector)
+		selectorRuneList := []rune(selector)
+		inj := inst.makeInjectionNameForType(ct, selectorRuneList[0])
 		f.Injection = selector + inj
 	}
 	return nil
 }
 
-func (inst *configenInfoResolve) makeInjectionNameForType(ct *gocode.ComplexType, rawSel string) string {
+// makeInjectionNameForType: rawSel=['#'|'.']
+func (inst *configenInfoResolve) makeInjectionNameForType(ct *gocode.ComplexType, rawSel rune) string {
 	vt := ct.ValueType
 	pkg := vt.Package
 	fullname := pkg.FullName
@@ -100,9 +103,9 @@ func (inst *configenInfoResolve) makeInjectionNameForType(ct *gocode.ComplexType
 		}
 	}
 	prefix := "com-"
-	if rawSel == "#" {
-		prefix = "id-"
-	} else if rawSel == "." {
+	if rawSel == '#' {
+		prefix = "alias-"
+	} else if rawSel == '.' {
 		prefix = "class-"
 	}
 	return prefix + hex.String() + "-" + vt.SimpleName

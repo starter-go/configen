@@ -132,12 +132,16 @@ func (inst *FieldInjector) makeGetterInnerOneObject(b *strings.Builder) {
 	// b.WriteString("// todo: makeGetterInnerOneObject \n")
 	// 	return ie.GetComponent("").(*bytes.Buffer)
 
-	const mkStr = "\""
+	const (
+		nl    = "\n"
+		mkStr = "\""
+	)
+	b.WriteString("    ")
 	b.WriteString("return ie.GetComponent(" + mkStr)
 	b.WriteString(inst.selector)
 	b.WriteString(mkStr + ").(")
 	b.WriteString(inst.fieldType.String())
-	b.WriteString(")")
+	b.WriteString(")" + nl)
 }
 
 func (inst *FieldInjector) makeGetterInnerOneNative(b *strings.Builder) {

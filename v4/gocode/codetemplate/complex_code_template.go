@@ -31,7 +31,7 @@ type ComplexTemplate struct {
 	templateAC *template.Template
 }
 
-// MakeAutoConfigFunc 创建 'func autoConfig() {}' 代码片段
+// MakeAutoConfigFunc 创建 'func registerComponents() {}' 代码片段
 func (inst *ComplexTemplate) MakeAutoConfigFunc(ac *AutoConfig) (string, error) {
 	t := inst.templateAC
 	if t == nil {

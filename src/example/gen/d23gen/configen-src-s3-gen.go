@@ -9,7 +9,7 @@ import (
 //
 // id:com-ea8e092494300fad-s3-Com3dao
 // class:
-// alias:id-e8a3937f481a2a4fcb65cb9f0011b311-IDao
+// alias:alias-e8a3937f481a2a4fcb65cb9f0011b311-IDao
 // scope:singleton
 //
 type pea8e092494_s3_Com3dao struct {
@@ -19,7 +19,7 @@ func (inst* pea8e092494_s3_Com3dao) register(cr components.Registry) {
 	r := cr.New()
 	r.ID = "com-ea8e092494300fad-s3-Com3dao"
 	r.Classes = ""
-	r.Aliases = "id-e8a3937f481a2a4fcb65cb9f0011b311-IDao"
+	r.Aliases = "alias-e8a3937f481a2a4fcb65cb9f0011b311-IDao"
 	r.Scope = "singleton"
 	r.NewFunc = inst.new
 	r.InjectFunc = inst.inject
@@ -34,7 +34,8 @@ func (inst* pea8e092494_s3_Com3dao) inject(injection components.Injection, insta
 	ie := injection.Ext()
 	com := instance.(*pea8e09249.Com3dao)
 
-	    com.Service = inst.getService(ie)
+	
+    com.Service = inst.getService(ie)
     com.Controller = inst.getController(ie)
 
 
@@ -43,7 +44,8 @@ func (inst* pea8e092494_s3_Com3dao) inject(injection components.Injection, insta
 
 
 func (inst*pea8e092494_s3_Com3dao) getService(ie components.InjectionExt)pe8a3937f4.IService{
-return ie.GetComponent("#id-e8a3937f481a2a4fcb65cb9f0011b311-IService").(pe8a3937f4.IService)}
+    return ie.GetComponent("#alias-e8a3937f481a2a4fcb65cb9f0011b311-IService").(pe8a3937f4.IService)
+}
 
 
 func (inst*pea8e092494_s3_Com3dao) getController(ie components.InjectionExt)[]pe8a3937f4.IController{

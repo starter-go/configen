@@ -2,8 +2,8 @@ package {{.PackageSimpleName}}
 
 import "github.com/starter-go/application/components"
 
-func autoConfig(cr components.Registry) error {
-    ac:=&autoConfiger{}
+func registerComponents(cr components.Registry) error {
+    ac:=&autoRegistrar{}
     ac.init(cr)
     return ac.addAll()
 }
@@ -12,19 +12,19 @@ type comFactory interface {
     register(cr components.Registry)
 }
 
-type autoConfiger struct {
+type autoRegistrar struct {
     cr components.Registry
 }
 
-func (inst *autoConfiger) init(cr components.Registry) {
+func (inst *autoRegistrar) init(cr components.Registry) {
 	inst.cr = cr
 }
 
-func (inst *autoConfiger) register(factory comFactory) {
+func (inst *autoRegistrar) register(factory comFactory) {
 	factory.register(inst.cr)
 }
 
-func (inst*autoConfiger) addAll() error {
+func (inst*autoRegistrar) addAll() error {
 
     {{.ComponentList}}
 

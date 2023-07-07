@@ -14,8 +14,9 @@ type SourceFolder struct {
 
 // DestinationFolder ...
 type DestinationFolder struct {
-	ID      dto.DestinationID
-	Config  dto.Destination
-	Path    afs.Path
-	Sources []*SourceFolder
+	ID                dto.DestinationID
+	Config            dto.Destination
+	Path              afs.Path
+	Sources           []*SourceFolder
+	PackageSimpleName string
 }

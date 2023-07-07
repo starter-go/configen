@@ -4,16 +4,34 @@
         "sources": [
             {
                 "id": "s1",
-                "path": "src/example",
+                "path": "src/example/parts/s1",
+                "r": true
+            },
+            {
+                "id": "s2",
+                "path": "src/example/parts/s2",
+                "r": true
+            },
+            {
+                "id": "s3",
+                "path": "src/example/parts/s3",
                 "r": true
             }
         ],
         "destinations": [
             {
                 "id": "d1",
-                "path": "gen/example",
+                "path": "src/example/gen/d1gen",
                 "sources": [
                     "s1"
+                ]
+            },
+            {
+                "id": "d23",
+                "path": "src/example/gen/d23gen",
+                "sources": [
+                    "s2",
+                    "s3"
                 ]
             }
         ]

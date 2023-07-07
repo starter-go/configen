@@ -1,0 +1,36 @@
+
+// type {{.InstanceType}} in package:{{.InstancePackageName}}
+//
+// id:{{.ComID}}
+// class:{{.ComClass}}
+// alias:{{.ComAlias}}
+// scope:{{.ComScope}}
+//
+type {{.FactoryType}} struct {
+}
+
+func (inst* {{.FactoryType}}) register(cr components.Registry) {
+	r := cr.New()
+	r.ID = "{{.ComID}}"
+	r.Classes = "{{.ComClass}}"
+	r.Aliases = "{{.ComAlias}}"
+	r.Scope = "{{.ComScope}}"
+	r.NewFunc = inst.new
+	r.InjectFunc = inst.inject
+	cr.Register(r)
+}
+
+func (inst* {{.FactoryType}}) new() any {
+    return &{{.InstanceType}}{}
+}
+
+func (inst* {{.FactoryType}}) inject(injection components.Injection, instance any) error {
+	ie := injection.Ext()
+	com := instance.(*{{.InstanceType}})
+
+	{{.InjectFieldList}}
+
+    return nil
+}
+
+{{.InjectFieldGetters}}

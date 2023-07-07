@@ -15,6 +15,21 @@ type SimpleType struct {
 	IsNativeType bool // a native type like: int|bool|any|error|string|...
 }
 
+func (inst *SimpleType) String() string {
+	builder := strings.Builder{}
+	if inst.IsPtr {
+		builder.WriteString("*")
+	}
+	if !inst.IsNativeType {
+		builder.WriteString(inst.Package.Alias)
+		builder.WriteString(".")
+	}
+	builder.WriteString(inst.SimpleName)
+	return builder.String()
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 // ParseSimpleType 把字符串解析为简单类型
 func ParseSimpleType(text string, imports *ImportSet) (*SimpleType, error) {
 	words := ParseWords(text)

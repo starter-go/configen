@@ -104,6 +104,23 @@ func (inst *ImportSet) Find(name string) *Import {
 	return table[name]
 }
 
+// List 列出所有条目
+func (inst *ImportSet) List() []*Import {
+	src := inst.list
+	dst := make([]*Import, 0)
+	tab := make(map[string]*Import)
+	for _, item := range src {
+		if item == nil {
+			continue
+		}
+		tab[item.Alias] = item
+	}
+	for _, item := range tab {
+		dst = append(dst, item)
+	}
+	return dst
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // TypeStructSet 是若干 TypeStruct 的集合

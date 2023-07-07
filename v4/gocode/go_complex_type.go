@@ -2,7 +2,10 @@
 
 package gocode
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 // ComplexType 表示一个复杂类型，例如 map[key]value 的类型, []item 的类型
 type ComplexType struct {
@@ -13,6 +16,25 @@ type ComplexType struct {
 	KeyType   *SimpleType
 	ValueType SimpleType
 }
+
+func (inst *ComplexType) String() string {
+	builder := strings.Builder{}
+	if inst.IsMap {
+		kt := inst.KeyType
+		if kt == nil {
+			panic("no key type for map")
+		}
+		builder.WriteString("map[")
+		builder.WriteString(kt.String())
+		builder.WriteString("]")
+	} else if inst.IsArray {
+		builder.WriteString("[]")
+	}
+	builder.WriteString(inst.ValueType.String())
+	return builder.String()
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 // ParseComplexType 解析复杂类型
 func ParseComplexType(text string, imports *ImportSet) (*ComplexType, error) {

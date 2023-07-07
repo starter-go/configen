@@ -58,7 +58,7 @@ func (inst *configenInfoResolve) resolveTypeStruct(c *v4.Context, ts *gocode.Typ
 func (inst *configenInfoResolve) resolveComImpl(c *v4.Context, ts *gocode.TypeStruct, impl *gocode.Implementation) error {
 
 	selector := impl.Injection
-	inj := inst.makeInjectionNameForType(&impl.Type)
+	inj := inst.makeInjectionNameForType(&impl.Type, selector)
 
 	if strings.ContainsRune(selector, '#') {
 		// add to alias
@@ -77,13 +77,13 @@ func (inst *configenInfoResolve) resolveField(c *v4.Context, f *gocode.Field) er
 	selector := f.Injection
 	if selector == "#" || selector == "." {
 		ct := &f.Type
-		inj := inst.makeInjectionNameForType(ct)
+		inj := inst.makeInjectionNameForType(ct, selector)
 		f.Injection = selector + inj
 	}
 	return nil
 }
 
-func (inst *configenInfoResolve) makeInjectionNameForType(ct *gocode.ComplexType) string {
+func (inst *configenInfoResolve) makeInjectionNameForType(ct *gocode.ComplexType, rawSel string) string {
 	vt := ct.ValueType
 	pkg := vt.Package
 	fullname := pkg.FullName
@@ -99,5 +99,11 @@ func (inst *configenInfoResolve) makeInjectionNameForType(ct *gocode.ComplexType
 			panic("the package full-name is empty")
 		}
 	}
-	return "com-" + hex.String() + "-" + vt.SimpleName
+	prefix := "com-"
+	if rawSel == "#" {
+		prefix = "id-"
+	} else if rawSel == "." {
+		prefix = "class-"
+	}
+	return prefix + hex.String() + "-" + vt.SimpleName
 }

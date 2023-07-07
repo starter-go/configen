@@ -26,3 +26,13 @@ type Configen struct {
 	Destinations []*Destination `json:"destinations"`
 	Sources      []*Source      `json:"sources"`
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+func (id SourceID) String() string {
+	return string(id)
+}
+
+func (id DestinationID) String() string {
+	return string(id)
+}

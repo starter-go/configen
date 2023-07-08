@@ -16,6 +16,8 @@ type Com2service struct {
 	Service    parts.IService    //starter:inject("#")
 	Controller parts.IController //starter:inject("#")
 	Dao        parts.IDao        //starter:inject("#")
+
+	Context application.Context //starter:inject("context")
 }
 
 func (inst *Com2service) _impl() {
@@ -60,5 +62,6 @@ func (inst *Com2service) onDestroy() error {
 
 func (inst *Com2service) loop() error {
 	vlog.Info("%v.loop", inst)
+	inst.Context.GetEnvironment()
 	return nil
 }

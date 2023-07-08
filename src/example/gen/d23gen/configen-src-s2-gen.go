@@ -2,6 +2,7 @@ package d23gen
 import (
     p0da63b10d "github.com/starter-go/configen/src/example/parts/s2"
     pe8a3937f4 "github.com/starter-go/configen/src/example/parts"
+    p0ef6f2938 "github.com/starter-go/application"
      "github.com/starter-go/application"
 )
 
@@ -39,6 +40,7 @@ func (inst* p0da63b10db_s2_Com2service) inject(injext application.InjectionExt, 
     com.Service = inst.getService(ie)
     com.Controller = inst.getController(ie)
     com.Dao = inst.getDao(ie)
+    com.Context = inst.getContext(ie)
 
 
     return nil
@@ -57,6 +59,11 @@ func (inst*p0da63b10db_s2_Com2service) getController(ie application.InjectionExt
 
 func (inst*p0da63b10db_s2_Com2service) getDao(ie application.InjectionExt)pe8a3937f4.IDao{
     return ie.GetComponent("#alias-e8a3937f481a2a4fcb65cb9f0011b311-IDao").(pe8a3937f4.IDao)
+}
+
+
+func (inst*p0da63b10db_s2_Com2service) getContext(ie application.InjectionExt)p0ef6f2938.Context{
+    return ie.GetContext()
 }
 
 

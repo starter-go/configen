@@ -1,8 +1,8 @@
 package d23gen
 import (
-    p0da63b10d "github.com/starter-go/configen/src/example/parts/s2"
-    pe8a3937f4 "github.com/starter-go/configen/src/example/parts"
     p0ef6f2938 "github.com/starter-go/application"
+    pe8a3937f4 "github.com/starter-go/configen/src/example/parts"
+    p0da63b10d "github.com/starter-go/configen/src/example/parts/s2"
      "github.com/starter-go/application"
 )
 

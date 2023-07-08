@@ -1,7 +1,7 @@
 package d1gen
 import (
-    p2fc3c2a45 "github.com/starter-go/configen/src/example/parts/s1"
     pe8a3937f4 "github.com/starter-go/configen/src/example/parts"
+    p2fc3c2a45 "github.com/starter-go/configen/src/example/parts/s1"
     pf98ed07a4 "io"
      "github.com/starter-go/application"
 )

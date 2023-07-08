@@ -2,8 +2,10 @@ package gocode
 
 import (
 	"crypto/md5"
+	"strings"
 
 	"github.com/starter-go/base/lang"
+	"github.com/starter-go/base/util"
 )
 
 // Import 表示导入当前源文件的一个包
@@ -118,6 +120,18 @@ func (inst *ImportSet) List() []*Import {
 	for _, item := range tab {
 		dst = append(dst, item)
 	}
+
+	// sort dst
+	sorter := util.Sorter{}
+	sorter.OnLen = func() int { return len(dst) }
+	sorter.OnSwap = func(i1, i2 int) { dst[i1], dst[i2] = dst[i2], dst[i1] }
+	sorter.OnLess = func(i1, i2 int) bool {
+		o1 := dst[i1].FullName
+		o2 := dst[i2].FullName
+		return strings.Compare(o1, o2) < 0
+	}
+	sorter.Sort()
+
 	return dst
 }
 
